@@ -1,4 +1,4 @@
-const API_URL = 'http://127.0.0.1:8000/graphql';
+const API_URL = 'https://gathergrid-live.onrender.com/graphql';
 
 /**
  * Generic function to talk to the GraphQL backend
