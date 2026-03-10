@@ -231,7 +231,12 @@ class CreateBooking(graphene.Mutation):
                 # Generate QR code
                 ticket_id = get_next_id("Ticket")
                 qr_data = f"TICKET-{ticket_id}-BOOKING-{booking_id}-SEAT-{seat_id}"
-                qr_path = f"qr_codes/ticket_{ticket_id}.png"
+                
+                qr_dir = "qr_codes"
+                import os
+                os.makedirs(qr_dir, exist_ok=True)
+                
+                qr_path = f"{qr_dir}/ticket_{ticket_id}.png"
 
                 qr = qrcode.make(qr_data)
                 qr.save(qr_path)
