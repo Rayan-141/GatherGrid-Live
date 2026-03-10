@@ -1,0 +1,171 @@
+{
+  "info": {
+    "name": "Event Ticket Booking System - GraphQL",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Queries",
+      "item": [
+        {
+          "name": "Get All Events",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"{ allEvents { id title venue eventDate totalSeats seats { seatNumber category price status } } }\"}"
+            },
+            "url": "http://127.0.0.1:8000/graphql/"
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"{ allUsers { id name email phone } }\"}"
+            },
+            "url": "http://127.0.0.1:8000/graphql/"
+          }
+        },
+        {
+          "name": "Get Event Available Seats",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"{ event(id: 1) { title seats(filter: \\\"available\\\") { seatNumber price } } }\"}"
+            },
+            "url": "http://127.0.0.1:8000/graphql/"
+          }
+        },
+        {
+          "name": "Get User Bookings",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"{ user(id: 1) { name bookings { event { title } status totalAmount } } }\"}"
+            },
+            "url": "http://127.0.0.1:8000/graphql/"
+          }
+        },
+        {
+          "name": "Get Booking Details",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"{ booking(id: 1) { id status totalAmount event { title } tickets { id qrCode seat { seatNumber } } payment { id paymentStatus amount } } }\"}"
+            },
+            "url": "http://127.0.0.1:8000/graphql/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mutations",
+      "item": [
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"mutation { createBooking(input: { userId: 1, eventId: 1, seatIds: [1, 2] }) { booking { id status totalAmount } } }\"}"
+            },
+            "url": "http://127.0.0.1:8000/graphql/"
+          }
+        },
+        {
+          "name": "Confirm Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"mutation { confirmPayment(bookingId: 1, amount: 1000) { payment { id paymentStatus } } }\"}"
+            },
+            "url": "http://127.0.0.1:8000/graphql/"
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"mutation { cancelBooking(bookingId: 1) { message } }\"}"
+            },
+            "url": "http://127.0.0.1:8000/graphql/"
+          }
+        },
+        {
+          "name": "Test Double Booking (Should Fail)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"mutation { createBooking(input: { userId: 2, eventId: 1, seatIds: [1] }) { booking { id } } }\"}"
+            },
+            "url": "http://127.0.0.1:8000/graphql/"
+          }
+        }
+      ]
+    }
+  ]
+}

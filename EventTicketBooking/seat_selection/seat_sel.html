@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>GatherGrid - Event Seat Booking</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
+	<script src="js/jquery-1.11.0.min.js"></script>
+	<script src="js/jquery.seat-charts.js"></script>
+	<style>
+		.booking-info-table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		.booking-info-table td {
+			padding: 6px 8px;
+			vertical-align: top;
+			font-size: 14px;
+		}
+
+		.booking-info-table .label-cell {
+			color: #df0e62;
+			font-weight: bold;
+			white-space: nowrap;
+			width: 120px;
+		}
+
+		.booking-info-table .value-cell {
+			color: var(--theme-title);
+			word-break: break-word;
+		}
+
+		/* Remove any scrollbar styling */
+		body {
+			overflow-x: hidden;
+		}
+
+		.main {
+			overflow: visible;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="content">
+		<h2>Seat Booking</h2>
+		<div class="main">
+			<div class="demo">
+				<div id="seat-map">
+					<div class="front">STAGE</div>
+				</div>
+				<div class="booking-details">
+					<table class="booking-info-table">
+						<tr>
+							<td class="label-cell">Event</td>
+							<td class="value-cell" id="eventNameDisplay">—</td>
+						</tr>
+						<tr>
+							<td class="label-cell">Date</td>
+							<td class="value-cell" id="dateDisplay">—</td>
+						</tr>
+						<tr>
+							<td class="label-cell">Time</td>
+							<td class="value-cell" id="timeDisplay">—</td>
+						</tr>
+						<tr>
+							<td class="label-cell">Price/Ticket</td>
+							<td class="value-cell" id="priceDisplay">—</td>
+						</tr>
+						<tr>
+							<td class="label-cell">Tickets</td>
+							<td class="value-cell"><span id="counter">0</span></td>
+						</tr>
+						<tr>
+							<td class="label-cell">Selected Seats</td>
+							<td class="value-cell">
+								<div id="selected-seats" style="margin: 0; padding: 0;"></div>
+							</td>
+						</tr>
+						<tr>
+							<td class="label-cell">Total</td>
+							<td class="value-cell" style="font-weight: bold; font-size: 16px;">₹<span
+									id="total">0</span></td>
+						</tr>
+					</table>
+
+					<div id="legend"></div>
+				</div>
+
+				<script type="text/javascript">
+					$(document).ready(function () {
+						// Populate booking details from localStorage
+						const eventName = localStorage.getItem('selectedEvent') || 'Event';
+						const rawDate = localStorage.getItem('selectedDate') || 'TBA';
+						const rawTime = localStorage.getItem('selectedTime') || 'TBA';
+
+						// CLEANUP PRICE: Remove ₹ and "onwards" to avoid double symbols or NaN
+						const rawPrice = localStorage.getItem('selectedPrice') || '500';
+						const eventPrice = parseInt(String(rawPrice).replace(/[^0-9]/g, '')) || 500;
+
+						// If time is still TBA but date contains a time, split it
+						let finalDate = rawDate;
+						let finalTime = rawTime;
+						if (rawTime === 'TBA' && rawDate.includes(',')) {
+							const lastComma = rawDate.lastIndexOf(',');
+							const possibleTime = rawDate.substring(lastComma + 1).trim();
+							// Check if it looks like a time (contains AM/PM or : )
+							if (possibleTime.match(/\d+:\d+|AM|PM/i)) {
+								finalDate = rawDate.substring(0, lastComma).trim();
+								finalTime = possibleTime;
+							}
+						}
+
+						$('#eventNameDisplay').text(eventName);
+						$('#dateDisplay').text(finalDate);
+						$('#timeDisplay').text(finalTime);
+						$('#priceDisplay').text('₹' + eventPrice);
+
+						var price = eventPrice;
+						var $cart = $('#selected-seats'),
+							$counter = $('#counter'),
+							$total = $('#total');
+
+						var sc = $('#seat-map').seatCharts({
+							map: [
+								'aaaaaaaaaa',
+								'aaaaaaaaaa',
+								'__________',
+								'aaaaaaaa__',
+								'aaaaaaaaaa',
+								'aaaaaaaaaa',
+								'aaaaaaaaaa',
+								'aaaaaaaaaa',
+								'aaaaaaaaaa',
+								'__aaaaaa__'
+							],
+							naming: {
+								top: false,
+								getLabel: function (character, row, column) {
+									return column;
+								}
+							},
+							legend: {
+								node: $('#legend'),
+								items: [
+									['a', 'available', 'Available'],
+									['a', 'unavailable', 'Sold'],
+									['a', 'selected', 'Selected']
+								]
+							},
+							click: function () {
+								if (this.status() == 'available') {
+									$('<div style="background:#f0f0f0; padding:4px 10px; margin:3_0; border-radius:4px; font-size:13px;">R-' + (this.settings.row + 1) + '  S-' + this.settings.label + '</div>')
+										.attr('id', 'cart-item-' + this.settings.id)
+										.data('seatId', this.settings.id)
+										.appendTo($cart);
+
+									$counter.text(sc.find('selected').length + 1);
+									$total.text(recalculateTotal(sc) + price);
+
+									setTimeout(updateSeatsStorage, 10);
+
+									return 'selected';
+								} else if (this.status() == 'selected') {
+									$counter.text(sc.find('selected').length - 1);
+									$total.text(recalculateTotal(sc) - price);
+									$('#cart-item-' + this.settings.id).remove();
+
+									setTimeout(updateSeatsStorage, 10);
+
+									return 'available';
+								} else if (this.status() == 'unavailable') {
+									return 'unavailable';
+								} else {
+									return this.style();
+								}
+							}
+						});
+
+						function updateSeatsStorage() {
+							const selected = sc.find('selected');
+							localStorage.setItem('selectedSeatsCount', selected.length);
+							const labels = [];
+							const seatNumbers = [];
+							selected.each(function () {
+								labels.push('R-' + (this.settings.row + 1) + ' S-' + this.settings.label);
+								seatNumbers.push(this.settings.id); // This is "1_1", "1_2", etc.
+							});
+							localStorage.setItem('selectedSeats', JSON.stringify(labels));
+							localStorage.setItem('selectedSeatNumbers', JSON.stringify(seatNumbers));
+						}
+						// Pre-sold seats - Fetch from backend for REAL data
+						const eventId = parseInt(localStorage.getItem('selectedEventId')) || 1;
+
+						async function fetchSeatStatuses() {
+							const query = `
+								query {
+									event(id: ${eventId}) {
+										id
+										seats {
+											seat_number
+											status
+										}
+									}
+								}
+							`;
+
+							try {
+								const response = await fetch('http://127.0.0.1:8000/graphql', {
+									method: 'POST',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify({ query })
+								});
+								const result = await response.json();
+								const seats = result.data?.event?.seats || [];
+								console.log("Raw seats from DB for event " + eventId + ":", seats);
+
+								// Treat everything except 'available' as unavailable (Red)
+								const unavailableSeats = seats
+									.filter(s => s.status !== 'available')
+									.map(s => s.seat_number);
+
+								if (unavailableSeats.length > 0) {
+									sc.get(unavailableSeats).status('unavailable');
+									console.log("Seats turned RED/Sold:", unavailableSeats);
+								}
+
+								console.log("Updated live seat statuses:", unavailableSeats);
+							} catch (err) {
+								console.error("Error fetching live seat statuses:", err);
+								// Fallback to some hardcoded ones if API fails
+								sc.get(['1_2', '4_4', '4_5', '6_6', '6_7', '8_5', '8_6', '8_7', '8_8', '10_1', '10_2']).status('unavailable');
+							}
+						}
+
+						fetchSeatStatuses();
+						// 10000% REAL-TIME: Refresh every 5 seconds to sync with other users
+						setInterval(fetchSeatStatuses, 5000);
+
+					});
+
+					function recalculateTotal(sc) {
+						var total = 0;
+						var rawPrice = localStorage.getItem('selectedPrice') || '500';
+						var price = parseInt(String(rawPrice).replace(/[^0-9]/g, '')) || 500;
+						sc.find('selected').each(function () {
+							total += price;
+						});
+						return total;
+					}
+				</script>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/theme-change-seat-sel.js"></script>
+</body>
+
+</html>

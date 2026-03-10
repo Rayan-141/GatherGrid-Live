@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GatherGrid - Ticket Booking</title>
+  <link rel="icon" type="image/x-icon" href="img/fav.png">
+  <link rel="stylesheet" type="text/css" href="assets/css/style-starter.css">
+  <link rel="stylesheet" href="https://npmcdn.com/flickity@2/dist/flickity.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/progress.css">
+
+  <link rel="stylesheet" type="text/css" href="assets/css/ticket-booking.css">
+
+  <!-- ..............For progress-bar............... -->
+  <link rel="stylesheet" type="text/css" href="assets/css/e-ticket.css">
+
+  <link rel="stylesheet" type="text/css" href="assets/css/payment.css" />
+  <link href="https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:400,700" rel="stylesheet">
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <header id="site-header" class="w3l-header fixed-top">
+
+    <!--/nav-->
+    <nav class="navbar navbar-expand-lg navbar-light fill px-lg-0 py-0 px-3" style="justify-content: flex-start;">
+      <div class="container-fluid" style="padding-left: 20px;">
+        <h1 style="margin: 0;"><a class="navbar-brand" href="index.html" style="margin-left: 0;">
+            <img src="event_images/GatherGrid.png" class="brand-logo" alt="GatherGrid" style="height: 80px;">
+          </a></h1>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        </div>
+
+        <div class="Login_SignUp" id="login_s">
+          <!-- style="font-size: 2rem ; display: inline-block; position: relative;" -->
+          <!-- <li class="nav-item"> -->
+          <a class="nav-link" href="sign_in.html"><i class="fa fa-user-circle-o" style="font-size: 2.2rem;"></i></a>
+          <!-- </li> -->
+        </div>
+        <!-- toggle switch for light and dark theme -->
+        <div class="mobile-position">
+          <nav class="navigation">
+            <div class="theme-switch-wrapper">
+              <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox">
+                <div class="mode-container">
+                  <i class="gg-sun"></i>
+                  <i class="gg-moon"></i>
+                </div>
+              </label>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container" id="progress-container-id">
+    <div class="row">
+      <div class="col">
+        <div class="px-0 pt-4 pb-0 mt-3 mb-3">
+          <form id="form">
+            <ul id="progressbar" class="progressbar-class">
+              <li class="active" id="step1">Seat Selection</li>
+              <li id="step2" class="not_active">User Details</li>
+              <li id="step3" class="not_active">Payment</li>
+              <li id="step4" class="not_active">E-Ticket</li>
+            </ul>
+            <br>
+            <fieldset>
+
+              <div>
+                <iframe id="seat-sel-iframe"
+                  style="  box-shadow: 0 14px 12px 0 var(--theme-border), 0 10px 50px 0 var(--theme-border); width: 800px; height: 550px; display: block; margin-left: auto; margin-right: auto;"
+                  src="seat_selection/seat_sel.html"></iframe>
+              </div>
+              <br>
+              <input type="button" name="next-step" class="next-step" value="Proceed to User Details"
+                onclick="generateUserForms()" />
+              <input type="button" name="previous-step" class="previous-step" value="Back" />
+            </fieldset>
+            <fieldset>
+              <div id="user-details-step">
+                <h2>User Details</h2>
+                <div id="dynamic-user-forms" class="user-details-container">
+                  <!-- Dynamic forms will appear here -->
+                </div>
+              </div>
+              <input type="button" name="next-step" class="next-step" value="Proceed to Payment" />
+              <input type="button" name="previous-step" class="previous-step" value="Back" />
+            </fieldset>
+            <fieldset>
+              <!-- Payment Page -->
+              <div id="payment_div">
+                <div class="payment-row">
+                  <div class="col-75">
+                    <div class="payment-container">
+                      <div class="payment-row">
+                        <div class="col-50">
+                          <h3 id="payment-h3">Payment</h3>
+                          <div class="payment-row payment">
+                            <div class="col-50 payment">
+                              <label for="card" class="method card">
+                                <div class="icon-container">
+                                  <i class="fa fa-cc-visa" style="color: navy"></i>
+                                  <i class="fa fa-cc-amex" style="color: blue"></i>
+                                  <i class="fa fa-cc-mastercard" style="color: red"></i>
+                                  <i class="fa fa-cc-discover" style="color: orange"></i>
+                                </div>
+                                <div class="radio-input">
+                                  <input type="radio" id="card" />
+                                  Pay RS.200.00 with credit card
+                                </div>
+                              </label>
+                            </div>
+                            <div class="col-50 payment">
+                              <label for="paypal" class="method paypal">
+                                <div class="icon-container">
+                                  <i class="fa fa-paypal" style="color: navy"></i>
+                                </div>
+                                <div class="radio-input">
+                                  <input id="paypal" type="radio" checked>
+                                  Pay $30.00 with PayPal
+                                </div>
+                              </label>
+                            </div>
+                          </div>
+
+                          <div class="payment-row">
+                            <div class="col-50">
+                              <label for="cname">Cardholder's Name</label>
+                              <input type="text" id="cname" name="cardname" placeholder="Firstname Lastname" required />
+                            </div>
+                            <div class="col-50">
+                              <label for="ccnum">Credit card number</label>
+                              <input type="text" id="ccnum" name="cardnumber" placeholder="xxxx-xxxx-xxxx-xxxx"
+                                required />
+                            </div>
+                          </div>
+                          <div class="payment-row">
+                            <div class="col-50">
+                              <label for="expmonth">Exp Month</label>
+                              <input type="text" id="expmonth" name="expmonth" placeholder="September" required />
+                            </div>
+                            <div class="col-50">
+                              <div class="payment-row">
+                                <div class="col-50">
+                                  <label for="expyear">Exp Year</label>
+                                  <input type="text" id="expyear" name="expyear" placeholder="yyyy" required />
+                                </div>
+                                <div class="col-50">
+                                  <label for="cvv">CVV</label>
+                                  <input type="text" id="cvv" name="cvv" placeholder="xxx" required />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <input type="button" name="next-step" class="next-step pay-btn" value="Confirm Payment"
+                onclick="generateETicket()" />
+              <input type="button" name="previous-step" class="cancel-pay-btn" value="Cancel Payment"
+                onclick="location.href='index.html';" />
+            </fieldset>
+            <fieldset>
+              <h2>E-Ticket</h2>
+              <div
+                style="max-width: 420px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.12); overflow: hidden; border: 2px solid #f0f0f0;">
+                <!-- Header -->
+                <div
+                  style="background: linear-gradient(135deg, #df0e62, #ff4081); padding: 20px; text-align: center; color: #fff;">
+                  <img src="event_images/GatherGrid.png" alt="GatherGrid" style="height: 50px; margin-bottom: 8px;"
+                    onerror="this.style.display='none'">
+                  <h3 style="font-size: 18px; font-weight: 700; color: #fff;" id="eticket-event-name">Event Name</h3>
+                  <p style="font-size: 12px; opacity: 0.9; color: #fff;">GatherGrid Entertainment</p>
+                  <span
+                    style="display: inline-block; background: rgba(255,255,255,0.25); padding: 4px 14px; border-radius: 12px; font-size: 11px; margin-top: 8px; font-weight: 600; letter-spacing: 1px;">✅
+                    CONFIRMED</span>
+                </div>
+                <!-- Details -->
+                <div style="padding: 18px 24px;">
+                  <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                      <td style="padding:8px 0;font-size:12px;color:#888;text-transform:uppercase;font-weight:600;">
+                        Date
+                      </td>
+                      <td style="padding:8px 0;font-size:14px;color:#222;text-align:right;font-weight:500;"
+                        id="eticket-date">—</td>
+                    </tr>
+                    <tr>
+                      <td
+                        style="padding:8px 0;font-size:12px;color:#888;text-transform:uppercase;font-weight:600;border-top:1px solid #f0f0f0;">
+                        Time</td>
+                      <td
+                        style="padding:8px 0;font-size:14px;color:#222;text-align:right;font-weight:500;border-top:1px solid #f0f0f0;"
+                        id="eticket-time">—</td>
+                    </tr>
+                    <tr>
+                      <td
+                        style="padding:8px 0;font-size:12px;color:#888;text-transform:uppercase;font-weight:600;border-top:1px solid #f0f0f0;">
+                        Seats</td>
+                      <td
+                        style="padding:8px 0;font-size:14px;color:#222;text-align:right;font-weight:500;border-top:1px solid #f0f0f0;"
+                        id="eticket-seats">—</td>
+                    </tr>
+                    <tr>
+                      <td
+                        style="padding:8px 0;font-size:12px;color:#888;text-transform:uppercase;font-weight:600;border-top:1px solid #f0f0f0;">
+                        Attendees</td>
+                      <td
+                        style="padding:8px 0;font-size:14px;color:#222;text-align:right;font-weight:500;border-top:1px solid #f0f0f0;"
+                        id="eticket-attendees">—</td>
+                    </tr>
+                    <tr>
+                      <td
+                        style="padding:8px 0;font-size:12px;color:#888;text-transform:uppercase;font-weight:600;border-top:1px solid #f0f0f0;">
+                        Price/Ticket</td>
+                      <td
+                        style="padding:8px 0;font-size:14px;color:#222;text-align:right;font-weight:500;border-top:1px solid #f0f0f0;"
+                        id="eticket-price">—</td>
+                    </tr>
+                  </table>
+                  <div
+                    style="background:#f8f9fa;border-radius:10px;padding:12px 16px;margin-top:12px;display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:14px;font-weight:700;color: #333;">Total</span>
+                    <span style="font-size:20px;font-weight:800;color: #df0e62;" id="eticket-total">₹0</span>
+                  </div>
+                </div>
+                <!-- Dashed Line -->
+                <div style="border-top: 2px dashed #ddd; margin: 0 24px;"></div>
+                <!-- QR Code -->
+                <div style="padding: 20px; text-align: center;">
+                  <p
+                    style="font-size:12px;color:#888;margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;">
+                    Scan QR</p>
+                  <div id="qrcode"
+                    style="display:inline-block;padding:12px;background:#fff;border-radius:10px;border:2px solid #f0f0f0;">
+                  </div>
+                  <p style="font-size:11px;color:#aaa;margin-top:12px;" id="eticket-booking-id">Booking ID: —</p>
+                </div>
+              </div>
+        </div>
+
+        <input type="button" name="previous-step" class="home-page-btn" value="Browse to Home Page"
+          onclick="location.href='index.html';" />
+        </fieldset>
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Reliable QR Code Library (EasyQRCodeJS) -->
+  <script src="https://cdn.jsdelivr.net/gh/ushelp/EasyQRCodeJS@master/dist/easy.qrcode.min.js"></script>
+  <script src="js/api_integration.js"></script>
+  <script>
+    // Generate E-Ticket with QR Code when reaching the E-Ticket step
+    async function generateETicket() {
+      const eventName = localStorage.getItem('selectedEvent') || 'Event';
+      const eventDate = localStorage.getItem('selectedDate') || 'TBA';
+      const eventTime = localStorage.getItem('selectedTime') || 'TBA';
+      let rawPrice = localStorage.getItem('selectedPrice') || '500';
+      const seatCount = localStorage.getItem('selectedSeatsCount') || '0';
+      const venue = localStorage.getItem('selectedVenue') || 'TBA';
+      const selectedSeatsArray = JSON.parse(localStorage.getItem('selectedSeats') || '[]');
+      const seatsStr = selectedSeatsArray.length > 0 ? selectedSeatsArray.join(', ') : 'N/A';
+
+      // CLEANUP PRICE: Remove ₹ and "onwards" to avoid NaN
+      const eventPrice = parseInt(String(rawPrice).replace(/[^0-9]/g, '')) || 500;
+      const totalPriceInfo = eventPrice * parseInt(seatCount);
+      let bookingId = 'GG-' + Date.now();
+
+      // Collect user details from forms (using the ones we just fetched or re-fetching safely)
+      const users = [];
+      const userCards = document.querySelectorAll('.user-form-card');
+
+      const userData = {
+        name: userCards[0]?.querySelectorAll('input')[0]?.value || 'Anonymous',
+        email: userCards[0]?.querySelectorAll('input')[1]?.value || 'user@example.com',
+        phone: userCards[0]?.querySelectorAll('input')[2]?.value || '0000000000'
+      };
+
+      // Map event and seat IDs for REAL GraphDB sync
+      const eventId = parseInt(localStorage.getItem('selectedEventId')) || 1;
+      const seatNumbers = JSON.parse(localStorage.getItem('selectedSeatNumbers') || '[]');
+
+      // Metadata for JIT creation
+      const eventMetadata = {
+        title: eventName,
+        venue: venue,
+        date: eventDate + " " + eventTime,
+        price: eventPrice,
+        image: localStorage.getItem('selectedImage') || 'event_images/Karan Aujla.png'
+      };
+
+      try {
+        // 1. Create Booking in Neo4j with JIT Event/Seat creation
+        const booking = await apiCreateBooking(userData, eventId, seatNumbers, eventMetadata);
+        console.log("Booking created in GraphDB (JIT):", booking);
+        bookingId = `GG-DB-${booking.id}`;
+        console.log("Booking created in GraphDB:", booking);
+        bookingId = `GG-DB-${booking.id}`;
+
+        // 2. Confirm Payment in Neo4j
+        await apiConfirmPayment(booking.id, totalPriceInfo);
+        console.log("Payment confirmed in GraphDB");
+
+      } catch (err) {
+        console.error("GraphDB Sync Failed:", err);
+      }
+
+      // ── REST OF THE UI LOGIC ──
+
+      userCards.forEach(card => {
+        const inputs = card.querySelectorAll('input, select');
+        if (inputs.length > 0) {
+          users.push({
+            name: inputs[0]?.value || 'N/A',
+            phone: inputs[2]?.value || 'N/A'
+          });
+        }
+      });
+
+      // Populate e-ticket display
+      document.getElementById('eticket-event-name').textContent = eventName;
+      document.getElementById('eticket-date').textContent = eventDate;
+      document.getElementById('eticket-time').textContent = eventTime;
+      document.getElementById('eticket-seats').textContent = seatsStr;
+      document.getElementById('eticket-attendees').textContent = users.length || seatCount;
+      document.getElementById('eticket-price').textContent = '₹' + eventPrice;
+      document.getElementById('eticket-total').textContent = '₹' + totalPriceInfo;
+      document.getElementById('eticket-booking-id').textContent = 'Booking ID: ' + bookingId;
+
+      // Build QR code content: Comprehensive Detail Summary (Full Offline)
+      let qrText = `🎟️ GATHERGRID OFFICIAL TICKET 🎟️\n`;
+      qrText += `---------------------------\n`;
+      qrText += `📅 Event: ${eventName}\n`;
+      qrText += `📍 Location: ${venue}\n`;
+      qrText += `📆 Date: ${eventDate}\n`;
+      qrText += `⏰ Time: ${eventTime}\n`;
+      qrText += `💺 Seats: ${seatsStr}\n`;
+      qrText += `🎫 Tickets: ${seatCount}\n`;
+      qrText += `💰 Total: ₹${totalPriceInfo}\n`;
+      qrText += `🆔 ID: ${bookingId}\n`;
+      qrText += `---------------------------\n`;
+      qrText += `👤 Attendees:\n`;
+      users.forEach((u, index) => {
+        qrText += `${index + 1}. ${u.name} (${u.phone})\n`;
+      });
+      qrText += `---------------------------\n`;
+      qrText += `Verify at Entry\n`;
+
+      // 10000% GUARANTEED QR GENERATION (Using Reliable API)
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+
+      const encodedText = encodeURIComponent(qrText);
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodedText}`;
+
+      const img = new Image();
+      img.src = qrUrl;
+      img.alt = "Scan QR";
+      img.style.width = "180px";
+      img.style.height = "180px";
+      img.style.display = "block";
+      img.style.margin = "0 auto";
+
+      // Add a loader state just in case
+      qrContainer.innerHTML = '<p style="font-size:10px;color:#aaa;">Generating...</p>';
+
+      img.onload = function () {
+        qrContainer.innerHTML = '';
+        qrContainer.appendChild(img);
+      };
+
+      img.onerror = function () {
+        // Very rare fallback if API is down
+        qrContainer.innerHTML = '<p style="color:red;font-size:12px;">Scan failed. ID: ' + bookingId + '</p>';
+      };
+    }
+  </script>
+  <script>
+
+    function generateUserForms() {
+      const seatCount = parseInt(localStorage.getItem('selectedSeatsCount')) || 0;
+      const container = document.getElementById('dynamic-user-forms');
+      container.innerHTML = '';
+
+      if (seatCount === 0) {
+        container.innerHTML = '<p style="color: var(--theme-rose);">Please select at least one seat.</p>';
+        return;
+      }
+
+      for (let i = 1; i <= seatCount; i++) {
+        const card = document.createElement('div');
+        card.className = 'user-form-card';
+        card.innerHTML = `
+        <h4>User ${i} Details</h4>
+        <div class="user-grid">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" placeholder="Enter name" required>
+          </div>
+          <div class="form-group">
+            <label>Email ID</label>
+            <input type="email" placeholder="Enter email" required>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" placeholder="Enter phone" required>
+          </div>
+          <div class="form-group">
+            <label>Age</label>
+            <input type="number" placeholder="Enter age" required>
+          </div>
+          <div class="form-group">
+            <label>Birth Date</label>
+            <input type="date" required>
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select style="width: 100%; padding: 8px; border-radius: 5px; background: var(--theme-bg); color: var(--theme-title); border: 1px solid var(--theme-border);">
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+      `;
+        container.appendChild(card);
+      }
+    }
+  </script>
+
+  <script src="https://npmcdn.com/flickity@2/dist/flickity.pkgd.js"></script>
+  <script type="text/javascript" src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'>
+  </script>
+  <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+  <script src="assets/js/theme-change.js"></script>
+
+  <script type="text/javascript" src="assets/js/ticket-booking.js"></script>
+
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GatherGrid - Ticket Details</title>
+    <link rel="icon" type="image/x-icon" href="img/fav.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .ticket-container {
+            background: #fff;
+            border-radius: 20px;
+            max-width: 550px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ticket-header {
+            background: linear-gradient(135deg, #df0e62, #ff4081);
+            padding: 25px 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .ticket-header img {
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .ticket-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .ticket-header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .ticket-status {
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        .event-image-section {
+            padding: 20px 30px 0;
+        }
+
+        .event-image-section img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .details-section {
+            padding: 20px 30px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #888;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            min-width: 110px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: #222;
+            font-weight: 500;
+            text-align: right;
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #df0e62;
+            margin: 20px 0 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #df0e62;
+        }
+
+        .users-section {
+            padding: 0 30px 20px;
+        }
+
+        .user-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            border-left: 3px solid #df0e62;
+        }
+
+        .user-card h4 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .user-card p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .total-section {
+            background: #f8f9fa;
+            margin: 0 30px 20px;
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .total-amount {
+            font-size: 24px;
+            font-weight: 800;
+            color: #df0e62;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px 30px 25px;
+            color: #999;
+            font-size: 11px;
+        }
+
+        .booking-id {
+            background: #f0f0f0;
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .error-msg {
+            text-align: center;
+            padding: 60px 30px;
+            color: #666;
+        }
+
+        .error-msg h2 {
+            color: #df0e62;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ticket-container" id="ticketContainer">
+        <div class="error-msg" id="errorMsg" style="display:none;">
+            <h2>Invalid Ticket</h2>
+            <p>No booking details found. Please scan a valid QR code.</p>
+        </div>
+    </div>
+
+    <script>
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            const data = {};
+            for (const [key, value] of params.entries()) {
+                data[key] = decodeURIComponent(value);
+            }
+            return data;
+        }
+
+        function renderTicket() {
+            const data = getQueryParams();
+
+            if (!data.event) {
+                document.getElementById('errorMsg').style.display = 'block';
+                return;
+            }
+
+            const container = document.getElementById('ticketContainer');
+
+            // Parse users if available
+            let usersHtml = '';
+            if (data.users) {
+                try {
+                    const users = JSON.parse(data.users);
+                    usersHtml = `
+                        <div class="users-section">
+                            <div class="section-title">👤 Attendee Details</div>
+                            ${users.map((u, i) => `
+                                <div class="user-card">
+                                    <h4>Attendee ${i + 1}: ${u.name || 'N/A'}</h4>
+                                    <p>📧 ${u.email || 'N/A'} &nbsp;|&nbsp; 📱 ${u.phone || 'N/A'}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } catch (e) { }
+            }
+
+            // Parse seats
+            const seats = data.seats || 'N/A';
+            const seatCount = data.seatCount || '0';
+            const pricePerTicket = data.price || '0';
+            const total = data.total || '0';
+
+            // Event image
+            const eventImage = data.image ? `
+                <div class="event-image-section">
+                    <img src="${data.image}" alt="${data.event}" onerror="this.style.display='none'">
+                </div>
+            ` : '';
+
+            container.innerHTML = `
+                <div class="ticket-header">
+                    <img src="event_images/GatherGrid.png" alt="GatherGrid" onerror="this.style.display='none'">
+                    <h1>${data.event}</h1>
+                    <p>GatherGrid Entertainment</p>
+                    <div class="ticket-status">✅ CONFIRMED</div>
+                </div>
+                
+                ${eventImage}
+
+                <div class="details-section">
+                    <div class="section-title">🎫 Event Details</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Event</span>
+                        <span class="detail-value">${data.event}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Venue</span>
+                        <span class="detail-value">${data.venue || 'TBA'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value">${data.date || 'TBA'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Time</span>
+                        <span class="detail-value">${data.time || 'TBA'}</span>
+                    </div>
+
+                    <div class="section-title" style="margin-top: 25px;">💺 Booking Details</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Seats Booked</span>
+                        <span class="detail-value">${seatCount}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Seat Numbers</span>
+                        <span class="detail-value">${seats}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Price / Ticket</span>
+                        <span class="detail-value">₹${pricePerTicket}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">No. of Attendees</span>
+                        <span class="detail-value">${seatCount}</span>
+                    </div>
+                </div>
+
+                ${usersHtml}
+
+                <div class="total-section">
+                    <span class="total-label">Total Amount Paid</span>
+                    <span class="total-amount">₹${total}</span>
+                </div>
+
+                <div class="footer">
+                    <div class="booking-id">Booking ID: ${data.bookingId || 'GG-' + Date.now()}</div>
+                    <p>This is a digitally generated ticket by GatherGrid.</p>
+                    <p>Please show this ticket at the venue entrance.</p>
+                </div>
+            `;
+        }
+
+        renderTicket();
+    </script>
+</body>
+
+</html>
