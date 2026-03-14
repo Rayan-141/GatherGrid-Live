@@ -3,7 +3,7 @@ from neo4j import GraphDatabase
 
 # ── Database Connection ───────────────────────────────────────────
 # Use environment variables for security, fallback to your AuraDB details
-URI = os.environ.get("NEO4J_URI", "neo4j+s://86f463d4.databases.neo4j.io")
+URI = os.environ.get("NEO4J_URI", "neo4j+ssc://86f463d4.databases.neo4j.io")
 USER = os.environ.get("NEO4J_USERNAME", "86f463d4")
 PASSWORD = os.environ.get("NEO4J_PASSWORD", "KxvhaBpWCF_OcO98qLUsZEASLtJtewWMi3YShWFSxxY")
 

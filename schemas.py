@@ -7,7 +7,9 @@ from db import get_driver
 
 
 # ── Make qr_codes folder ─────────────────────────────────────────
-os.makedirs("qr_codes", exist_ok=True)
+import tempfile
+QR_DIR = os.path.join(tempfile.gettempdir(), "gathergrid_qr")
+os.makedirs(QR_DIR, exist_ok=True)
 
 
 # ── Helper: Get next ID ──────────────────────────────────────────
@@ -232,11 +234,7 @@ class CreateBooking(graphene.Mutation):
                 ticket_id = get_next_id("Ticket")
                 qr_data = f"TICKET-{ticket_id}-BOOKING-{booking_id}-SEAT-{seat_id}"
                 
-                qr_dir = "qr_codes"
-                import os
-                os.makedirs(qr_dir, exist_ok=True)
-                
-                qr_path = f"{qr_dir}/ticket_{ticket_id}.png"
+                qr_path = f"{QR_DIR}/ticket_{ticket_id}.png"
 
                 qr = qrcode.make(qr_data)
                 qr.save(qr_path)
