@@ -3,9 +3,9 @@ from neo4j import GraphDatabase
 
 # ── Database Connection ───────────────────────────────────────────
 # Use environment variables for security, fallback to your AuraDB details
-URI = os.environ.get("NEO4J_URI", "neo4j+ssc://86f463d4.databases.neo4j.io")
-USER = os.environ.get("NEO4J_USERNAME", "86f463d4")
-PASSWORD = os.environ.get("NEO4J_PASSWORD", "KxvhaBpWCF_OcO98qLUsZEASLtJtewWMi3YShWFSxxY")
+URI = os.environ.get("NEO4J_URI", "neo4j+ssc://69817a0b.databases.neo4j.io")
+USER = os.environ.get("NEO4J_USERNAME", "69817a0b")
+PASSWORD = os.environ.get("NEO4J_PASSWORD", "x4VCeSqbiTZUjPoY9iXLwljbHzmTy9U3t2l2GXsyGHY")
 
 driver = GraphDatabase.driver(URI, auth=(USER, PASSWORD))
 
