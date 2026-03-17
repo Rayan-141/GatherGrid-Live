@@ -281,10 +281,11 @@
       const users = [];
       const userCards = document.querySelectorAll('.user-form-card');
 
+      const firstCardInputs = userCards.length > 0 ? userCards[0].querySelectorAll('input') : [];
       const userData = {
-        name: userCards[0]?.querySelectorAll('input')[0]?.value || 'Anonymous',
-        email: userCards[0]?.querySelectorAll('input')[1]?.value || 'user@example.com',
-        phone: userCards[0]?.querySelectorAll('input')[2]?.value || '0000000000'
+        name: firstCardInputs[0]?.value || 'Anonymous',
+        email: firstCardInputs[1]?.value || 'user@example.com',
+        phone: firstCardInputs[2]?.value || '0000000000'
       };
 
       // Map event and seat IDs for REAL GraphDB sync
